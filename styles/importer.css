@@ -1,0 +1,44 @@
+/* Fabula Ultima PDF Importer */
+#fu-pdf-importer { --ink: #eef3ff; --ink2: rgba(238, 243, 255, 0.75); --ink3: rgba(238, 243, 255, 0.5); --line: rgba(159, 208, 255, 0.28); --line2: rgba(159, 208, 255, 0.14); --gold: #f2c45a; color: var(--ink); background: #0b1220; border: 1px solid var(--line); color-scheme: dark; }
+#fu-pdf-importer .window-header { background: rgba(12, 20, 44, 0.98); color: var(--ink); border-bottom: 1px solid var(--line2); }
+#fu-pdf-importer .window-content { padding: 0; overflow: hidden; color: var(--ink); background: radial-gradient(600px 340px at 10% -10%, rgba(176, 124, 255, 0.16), transparent 70%), #0b1220; }
+#fu-pdf-importer .window-content * { text-shadow: none; -webkit-text-stroke: 0; }
+#fu-pdf-importer .fupdf { display: flex; flex-direction: column; gap: 12px; height: 100%; min-height: 0; padding: 16px 18px; box-sizing: border-box; }
+#fu-pdf-importer .fupdf .lead { margin: 0; line-height: 1.5; color: var(--ink2); }
+#fu-pdf-importer .fupdf .note { margin: 0; font-size: 12px; color: var(--ink3); }
+#fu-pdf-importer .fupdf .drop { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; min-height: 200px; border: 2px dashed var(--line); border-radius: 10px; cursor: pointer; color: var(--ink2); font-size: 15px; }
+#fu-pdf-importer .fupdf .drop:hover { border-color: var(--gold); color: #fff3d1; }
+#fu-pdf-importer .fupdf .drop i { font-size: 38px; color: #c7a6ff; }
+#fu-pdf-importer .fupdf .drop input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+#fu-pdf-importer .fupdf .busy { margin: auto; width: min(460px, 90%); display: flex; flex-direction: column; gap: 10px; text-align: center; }
+#fu-pdf-importer .fupdf .busy .bar { height: 10px; border-radius: 5px; background: rgba(255, 255, 255, 0.08); overflow: hidden; }
+#fu-pdf-importer .fupdf .busy .bar i { display: block; height: 100%; background: linear-gradient(90deg, #8a5cff, var(--gold)); transition: width 0.2s; }
+#fu-pdf-importer .fupdf .busy small, #fu-pdf-importer .fupdf .busy p { color: var(--ink2); }
+#fu-pdf-importer .fupdf .sum { display: flex; flex-direction: column; gap: 2px; }
+#fu-pdf-importer .fupdf .sum b { font-size: 18px; letter-spacing: 0.03em; }
+#fu-pdf-importer .fupdf .sum span { font-size: 12px; color: var(--ink3); }
+#fu-pdf-importer .fupdf .opts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 12px; }
+#fu-pdf-importer .fupdf .opts label { display: flex; flex-direction: column; gap: 3px; font-size: 12px; color: var(--ink2); }
+#fu-pdf-importer .fupdf .opts label.chk { flex-direction: row; align-items: center; gap: 6px; grid-column: 1 / -1; }
+#fu-pdf-importer .fupdf :is(input[type='text'], input[type='search'], select) { height: 30px; padding: 0 8px; border-radius: 4px; border: 1px solid var(--line); background: rgba(255, 255, 255, 0.05); color: var(--ink); box-sizing: border-box; }
+#fu-pdf-importer .fupdf select option { background: #121b33; }
+#fu-pdf-importer .fupdf .tools { display: flex; gap: 6px; }
+#fu-pdf-importer .fupdf .tools input { flex: 1; }
+#fu-pdf-importer .fupdf button { all: unset; box-sizing: border-box; cursor: pointer; padding: 5px 12px; border-radius: 4px; border: 1px solid var(--line); background: rgba(90, 169, 255, 0.1); color: var(--ink); font-size: 12px; font-weight: 700; text-align: center; }
+#fu-pdf-importer .fupdf button:hover { border-color: var(--gold); color: #fff3d1; }
+#fu-pdf-importer .fupdf button[disabled] { opacity: 0.4; pointer-events: none; }
+#fu-pdf-importer .fupdf button.go { border-color: var(--gold); background: rgba(242, 196, 90, 0.16); color: #fff3d1; }
+#fu-pdf-importer .fupdf .list { flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 2px; padding-right: 4px; }
+#fu-pdf-importer .fupdf .row { display: grid; grid-template-columns: 18px minmax(0, 1fr) auto 36px 16px; align-items: center; gap: 10px; padding: 4px 8px; border-radius: 5px; border: 1px solid transparent; font-size: 13px; cursor: pointer; }
+#fu-pdf-importer .fupdf .row[hidden] { display: none; }
+#fu-pdf-importer .fupdf .row:hover { border-color: var(--line2); background: rgba(255, 255, 255, 0.03); }
+#fu-pdf-importer .fupdf .row .nm { display: flex; flex-direction: column; min-width: 0; }
+#fu-pdf-importer .fupdf .row .nm b, #fu-pdf-importer .fupdf .row .nm small { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#fu-pdf-importer .fupdf .row .nm small { font-size: 11px; color: var(--ink3); text-transform: capitalize; }
+#fu-pdf-importer .fupdf .row .ct { font-size: 11px; color: var(--ink3); white-space: nowrap; }
+#fu-pdf-importer .fupdf .row .art { display: flex; gap: 5px; color: #c7a6ff; }
+#fu-pdf-importer .fupdf .row.warn > .fa-triangle-exclamation { color: var(--gold); }
+#fu-pdf-importer .fupdf footer { display: flex; align-items: center; gap: 8px; padding-top: 10px; border-top: 1px solid var(--line2); }
+#fu-pdf-importer .fupdf footer .sp { flex: 1; font-size: 12px; color: var(--ink3); }
+#fu-pdf-importer > menu.controls-dropdown { color: #eef3ff; background: rgba(12, 20, 44, 0.98); border: 1px solid rgba(159, 208, 255, 0.35); border-radius: 6px; backdrop-filter: none; }
+.fupdf-open { flex: 1 1 100%; display: flex; align-items: center; justify-content: center; gap: 6px; }
