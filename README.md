@@ -13,7 +13,7 @@ https://github.com/EclipseGS27/improved-PDF-parser/releases/latest/download/modu
 ## Use it
 1. As the GM, click **Import from PDF** at the top of the Actors sidebar (or Module Settings → Open the importer).
 2. Choose a PDF. It is read in your browser; nothing is uploaded except the art, which goes to your Foundry data folder.
-3. Review what it found: every stat block with its level, rank, role and entry, how many attacks, spells and rules, whether it has art, and any notes. Untick what you don't want, pick the actor folder and where the art goes.
+3. Review what it found: every stat block with its level, rank, role and entry, how many attacks, spells and rules, whether it has art, and any notes. Untick what you don't want, pick an Actors folder or a world compendium (made for you if it doesn't exist) and where the art goes.
 4. Click **Import**.
 
 ## What you get

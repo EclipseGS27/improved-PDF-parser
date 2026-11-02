@@ -152,7 +152,7 @@ export class PdfImporter extends ApplicationV2 {
 	}
 
 	state = { step: 'pick', progress: 0, total: 0, note: '' };
-	opts = { folder: '', artDir: '', token: 'portrait', update: true, extras: false };
+	opts = { target: 'folder', folder: '', artDir: '', token: 'portrait', update: true, extras: false };
 
 	async _renderHTML() {
 		const s = this.state;
@@ -174,10 +174,11 @@ export class PdfImporter extends ApplicationV2 {
 			div.innerHTML = `
 				<header class="sum"><b>${esc(this.book)}</b><span>${blocks.length} stat blocks · ${withArt} with art · ${issues} with notes · ${this.extraArt?.length ?? 0} other illustrations</span></header>
 				<div class="opts">
-					<label><span>Actor folder</span><input type="text" data-o="folder" value="${esc(this.opts.folder)}"></label>
+					<label><span>Import into</span><select data-o="target"><option value="folder" ${this.opts.target === 'folder' ? 'selected' : ''}>An Actors folder</option><option value="compendium" ${this.opts.target === 'compendium' ? 'selected' : ''}>A compendium (world)</option></select></label>
+					<label><span>Folder or compendium name</span><input type="text" data-o="folder" value="${esc(this.opts.folder)}"></label>
 					<label><span>Save art to</span><input type="text" data-o="artDir" value="${esc(this.opts.artDir)}"></label>
 					<label><span>Token art</span><select data-o="token"><option value="portrait" ${this.opts.token === 'portrait' ? 'selected' : ''}>The small portrait (else the illustration)</option><option value="illustration" ${this.opts.token === 'illustration' ? 'selected' : ''}>The illustration</option></select></label>
-					<label class="chk"><input type="checkbox" data-o="update" ${this.opts.update ? 'checked' : ''}> Update creatures already imported to that folder</label>
+					<label class="chk"><input type="checkbox" data-o="update" ${this.opts.update ? 'checked' : ''}> Update creatures already imported there</label>
 					<label class="chk"><input type="checkbox" data-o="extras" ${this.opts.extras ? 'checked' : ''}> Also save every other illustration in the book (${this.extraArt?.length ?? 0})</label>
 				</div>
 				<div class="tools"><input type="search" placeholder="Filter…" data-filter><button type="button" data-act="all">All</button><button type="button" data-act="none">None</button></div>
@@ -299,8 +300,23 @@ export class PdfImporter extends ApplicationV2 {
 		await this.render();
 		const dir = this.opts.artDir.replace(/^\/+|\/+$/g, '');
 		await ensureDir(dir);
-		let folder = game.folders.find((f) => f.type === 'Actor' && f.name === this.opts.folder);
-		folder ??= await Folder.create({ name: this.opts.folder || this.book, type: 'Actor', color: '#5a3a8a' });
+		const label = this.opts.folder || this.book;
+		// where the creatures go: an Actors folder, or a world compendium (made if needed, unlocked to write)
+		let folder = null;
+		let pack = null;
+		let index = [];
+		if (this.opts.target === 'compendium') {
+			pack = game.packs.find((p) => p.documentName === 'Actor' && p.metadata.packageType === 'world' && p.metadata.label === label);
+			if (!pack) {
+				const CC = foundry.documents?.collections?.CompendiumCollection ?? globalThis.CompendiumCollection;
+				pack = await CC.createCompendium({ type: 'Actor', label, name: slug(label) });
+			}
+			if (pack.locked) await pack.configure({ locked: false });
+			index = [...(await pack.getIndex({ fields: ['system.level.value'] }))];
+		} else {
+			folder = game.folders.find((f) => f.type === 'Actor' && f.name === label);
+			folder ??= await Folder.create({ name: label, type: 'Actor', color: '#5a3a8a' });
+		}
 		const saved = new Map();
 		const art = async (img, name) => {
 			if (!img) return null;
@@ -326,8 +342,12 @@ export class PdfImporter extends ApplicationV2 {
 			const por = await art(b.art.portrait, `${base}-portrait`);
 			const img = ill ?? por;
 			const token = this.opts.token === 'portrait' ? (por ?? ill) : (ill ?? por);
-			const data = npcData(b, { book: this.book, img, token, folder: folder.id });
-			const existing = game.actors.find((a) => a.folder?.id === folder.id && a.name === b.name && a.system?.level?.value === b.level);
+			const data = npcData(b, { book: this.book, img, token, folder: folder?.id ?? null });
+			let existing = null;
+			if (pack) {
+				const hit = index.find((e) => e.name === b.name && e.system?.level?.value === b.level);
+				if (hit) existing = await pack.getDocument(hit._id);
+			} else existing = game.actors.find((a) => a.folder?.id === folder.id && a.name === b.name && a.system?.level?.value === b.level);
 			if (existing) {
 				if (!this.opts.update) {
 					skipped++;
@@ -340,7 +360,7 @@ export class PdfImporter extends ApplicationV2 {
 				await existing.createEmbeddedDocuments('Item', data.items);
 				updated++;
 			} else {
-				await Actor.implementation.create(data);
+				await Actor.implementation.create(data, pack ? { pack: pack.collection } : {});
 				made++;
 			}
 		}
@@ -358,7 +378,7 @@ export class PdfImporter extends ApplicationV2 {
 			}
 		}
 		doc.destroy();
-		const note = `${made} created, ${updated} updated${skipped ? `, ${skipped} skipped (already there)` : ''} in “${folder.name}”. Art saved to ${dir}${extras ? `, plus ${extras} other illustrations in ${dir}/other` : ''}.`;
+		const note = `${made} created, ${updated} updated${skipped ? `, ${skipped} skipped (already there)` : ''} in ${pack ? `the compendium “${pack.metadata.label}”` : `“${folder.name}”`}. Art saved to ${dir}${extras ? `, plus ${extras} other illustrations in ${dir}/other` : ''}.`;
 		ui.notifications.info(note);
 		this.state = { step: 'done', progress: 0, total: 0, note };
 		this.render();
