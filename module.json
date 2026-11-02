@@ -2,7 +2,7 @@
   "id": "fu-pdf-importer",
   "title": "Fabula Ultima PDF Importer",
   "description": "Import creatures from your Fabula Ultima PDFs (Core Rulebook, Bestiary, High, Natural and Techno Fantasy Atlases) as Project FU NPCs: every stat block with its attacks, spells, other actions, special rules, Affinities and immunities, and every creature's art, portraits and illustrations alike, including art split across two-page spreads.",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "authors": [{ "name": "George Sowidan" }],
   "compatibility": { "minimum": "13", "verified": "13" },
   "relationships": {
@@ -12,6 +12,6 @@
   "styles": ["styles/importer.css"],
   "url": "https://github.com/EclipseGS27/improved-PDF-parser",
   "manifest": "https://github.com/EclipseGS27/improved-PDF-parser/releases/latest/download/module.json",
-  "download": "https://github.com/EclipseGS27/improved-PDF-parser/releases/download/v1.0.0/fu-pdf-importer.zip",
+  "download": "https://github.com/EclipseGS27/improved-PDF-parser/releases/download/v1.1.0/fu-pdf-importer.zip",
   "license": "LICENSE"
 }
